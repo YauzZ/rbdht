@@ -4,6 +4,7 @@ require "socket"
 require "monitor"
 
 require "bencode"
+require 'redis'
 
 #DHT Constants
 BOOTSTRAP_NODES = [
@@ -45,6 +46,8 @@ module Crawler
     class DHTClient
         def initialize
             @nid = Utils::random_id
+
+            @redis = Redis::new(:host => "127.0.0.1", :port => 6379)
         end
 
         protected
@@ -189,6 +192,9 @@ module Crawler
                         port = a.fetch("port")
                     end
                     return unless port.between?(1, 65535)
+
+                    redis.sadd("s_dht",hash)
+
                     puts "magnet:?xt=urn:btih:#{Digest::hexencode(infohash)}, address:#{address[0]}:#{port}"
                 end
             rescue KeyError
