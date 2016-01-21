@@ -193,9 +193,9 @@ module Crawler
                     end
                     return unless port.between?(1, 65535)
 
-                    redis.sadd("s_dht",hash)
-
                     puts "magnet:?xt=urn:btih:#{Digest::hexencode(infohash)}, address:#{address[0]}:#{port}"
+
+                    @redis.sadd("s_dht",Digest::hexencode(infohash))
                 end
             rescue KeyError
             ensure
